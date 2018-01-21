@@ -162,7 +162,7 @@ const extraHelp = `
     Get the account details for the first 100 accounts starting with foo
       $ rpcit lookup_accounts foo 100 | rpcit get_accounts _
 
-    Get the witnesss decided chain properties from gtg's node
+    Get the witness-decided chain properties from gtg's node
       $ rpcit -a https://gtg.steem.house:8090 get_chain_properties
 
     Get user data from conveyor
