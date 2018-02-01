@@ -2,22 +2,22 @@
 # yarn lockfile v1
 
 
-"@steemit/koa-jsonrpc@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@steemit/koa-jsonrpc/-/koa-jsonrpc-1.1.0.tgz#fe511ef08263f310f8dbd0217a5b938a864c83c0"
+"@steemit/koa-jsonrpc@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@steemit/koa-jsonrpc/-/koa-jsonrpc-1.1.2.tgz#2f50b978a9728e83427dda9c31383a0707bf0340"
   dependencies:
-    "@steemit/rpc-auth" "^1.1.0"
+    "@steemit/rpc-auth" "^1.1.1"
     dsteem "^0.8.6"
-    uuid "^3.1.0"
+    uuid "^3.2.1"
     verror "^1.10.0"
 
 "@steemit/libcrypto@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@steemit/libcrypto/-/libcrypto-1.0.1.tgz#c31ab3e5deb667628169b3d54d746b015de31a79"
 
-"@steemit/rpc-auth@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@steemit/rpc-auth/-/rpc-auth-1.1.0.tgz#4170c04d928ef37af5bdbde3f517ef74909480bd"
+"@steemit/rpc-auth@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@steemit/rpc-auth/-/rpc-auth-1.1.1.tgz#8f6239e89783d2b251b49e9e1b9486b5d167f944"
   dependencies:
     "@steemit/libcrypto" "^1.0.1"
 
@@ -103,9 +103,13 @@
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-2.0.0.tgz#5a7306e367c539b9f6543499de8dd519fac37a8b"
 
-"@types/node@*", "@types/node@^9.3.0":
+"@types/node@*":
   version "9.3.0"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-9.3.0.tgz#3a129cda7c4e5df2409702626892cb4b96546dd5"
+
+"@types/node@^9.4.0":
+  version "9.4.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-9.4.0.tgz#b85a0bcf1e1cc84eb4901b7e96966aedc6f078d1"
 
 "@types/serve-static@*":
   version "1.13.1"
@@ -556,11 +560,11 @@ tsutils@^2.12.1:
   dependencies:
     tslib "^1.8.1"
 
-typescript@^2.6.2:
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.6.2.tgz#3c5b6fd7f6de0914269027f03c0946758f7673a4"
+typescript@^2.7.1:
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.7.1.tgz#bb3682c2c791ac90e7c6210b26478a8da085c359"
 
-uuid@^3.1.0:
+uuid@^3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.2.1.tgz#12c528bb9d58d0b9265d9a2f6f0fe8be17ff1f14"
 
