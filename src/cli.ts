@@ -1,15 +1,16 @@
 import * as program from 'commander'
-import {inspect} from 'util'
-import {VError} from 'verror'
-import {RPC, RPCSigner} from './index'
+import { inspect } from 'util'
+import { VError } from 'verror'
+import { RPC, RPCSigner } from './index'
 
-const {argv, env, exit, stderr, stdin, stdout} = process
+const { argv, env, exit, stderr, stdin, stdout } = process
 
 const KEYWORD_PATTERN = /^[0-9a-z]+:?=.+$/i
 
 function log(out: NodeJS.WriteStream, ...msgs) {
-    const fmt = out.isTTY ? (v) => inspect(v, {colors: true, depth: null})
-                          : JSON.stringify
+    const fmt = out.isTTY
+        ? v => inspect(v, { colors: true, depth: null })
+        : JSON.stringify
     for (const msg of msgs) {
         out.write(typeof msg === 'string' ? msg : fmt(msg))
     }
@@ -18,7 +19,7 @@ function log(out: NodeJS.WriteStream, ...msgs) {
 function parseKeywordParam(param: string) {
     let idx = param.indexOf('=')
     if (idx === -1) {
-        throw new VError({name: 'InvalidParam'}, 'Missing key=value pair')
+        throw new VError({ name: 'InvalidParam' }, 'Missing key=value pair')
     }
     let rawValue = param.slice(idx + 1)
     if (param[idx - 1] === ':') {
@@ -30,9 +31,12 @@ function parseKeywordParam(param: string) {
     try {
         value = parseParam(rawValue)
     } catch (cause) {
-        throw new VError({name: 'InvalidParam', cause}, `Unable to parse '${ key }'`)
+        throw new VError(
+            { name: 'InvalidParam', cause },
+            `Unable to parse '${key}'`
+        )
     }
-    return {key, value}
+    return { key, value }
 }
 
 function parseParam(param: string) {
@@ -45,8 +49,12 @@ function parseParam(param: string) {
 function readStream(stream: NodeJS.ReadStream) {
     return new Promise<Buffer>((resolve, reject) => {
         const chunks: Buffer[] = []
-        stream.on('data', (chunk) => { chunks.push(chunk) })
-        stream.on('end', () => { resolve(Buffer.concat(chunks)) })
+        stream.on('data', chunk => {
+            chunks.push(chunk)
+        })
+        stream.on('end', () => {
+            resolve(Buffer.concat(chunks))
+        })
         stream.on('error', reject)
     })
 }
@@ -59,28 +67,33 @@ interface Options {
 }
 
 async function main(method: string, params: string[], options: Options) {
-    if (options.verbose) { log(stderr, {method, params, options}, '\n') }
+    if (options.verbose) {
+        log(stderr, { method, params, options }, '\n')
+    }
     let parsedParams: any
     if (params.length === 1 && ['-', '_'].includes(params[0])) {
         const input = await readStream(stdin)
         try {
             if (params[0] === '_') {
-                parsedParams = input.toString('utf8')
-                                    .split('\n')
-                                    .map((line) => line.trim())
-                                    .filter((line) => line.length)
-                                    .map((line) => JSON.parse(line))
+                parsedParams = input
+                    .toString('utf8')
+                    .split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line.length)
+                    .map(line => JSON.parse(line))
             } else {
                 parsedParams = JSON.parse(input.toString('utf8'))
             }
-
         } catch (cause) {
-            throw new VError({name: 'InvalidParam', cause}, 'Unable to parse stdin')
+            throw new VError(
+                { name: 'InvalidParam', cause },
+                'Unable to parse stdin'
+            )
         }
     } else {
-        if (params.some((param) => KEYWORD_PATTERN.test(param))) {
+        if (params.some(param => KEYWORD_PATTERN.test(param))) {
             parsedParams = {}
-            for (const {key, value} of params.map(parseKeywordParam)) {
+            for (const { key, value } of params.map(parseKeywordParam)) {
                 parsedParams[key] = value
             }
         } else {
@@ -89,31 +102,41 @@ async function main(method: string, params: string[], options: Options) {
                 try {
                     parsedParams.push(parseParam(params[i]))
                 } catch (cause) {
-                    throw new VError({name: 'InvalidParam', cause}, `Unable to parse param at index ${ i }`)
+                    throw new VError(
+                        { name: 'InvalidParam', cause },
+                        `Unable to parse param at index ${i}`
+                    )
                 }
             }
         }
     }
     const client = new RPC(options.address)
     let request = client.buildRequest(method, parsedParams)
-    if (options.verbose) { log(stderr, request, '\n') }
+    if (options.verbose) {
+        log(stderr, request, '\n')
+    }
     if (options.sign) {
         const signer: RPCSigner = {
             account: env.RPCIT_ACCOUNT as string,
-            key: env.RPCIT_KEY as string,
+            key: env.RPCIT_KEY as string
         }
         if (!signer.account || !signer.key) {
             throw new VError(
-                {name: 'SigningError'},
-                'Credentials missing, make sure to set RPCIT_ACCOUNT and RPCIT_KEY',
+                { name: 'SigningError' },
+                'Credentials missing, make sure to set RPCIT_ACCOUNT and RPCIT_KEY'
             )
         }
         try {
             request = client.signRequest(signer, request)
         } catch (cause) {
-            throw new VError({name: 'SigningError', cause}, 'Unable to sign request')
+            throw new VError(
+                { name: 'SigningError', cause },
+                'Unable to sign request'
+            )
         }
-        if (options.verbose) { log(stderr, request, '\n') }
+        if (options.verbose) {
+            log(stderr, request, '\n')
+        }
     }
     const response = await client.send(request)
     const out = options.raw ? response : response.error || response.result
@@ -123,7 +146,7 @@ async function main(method: string, params: string[], options: Options) {
     return !options.raw && response.error ? 1 : 0
 }
 
-                     /*______________"\
+/*______________"\
                     /.----------------.\
                  ~~ ||                ||
                     ||                ||
@@ -172,15 +195,22 @@ const extraHelp = `
 
 program
     .arguments('<method> [params...]')
-    .option('-a, --address [url]', 'address to the RPC server', 'https://api.steemit.com')
+    .option(
+        '-a, --address [url]',
+        'address to the RPC server',
+        'https://api.steemit.com'
+    )
     .option('--dev', 'set address to https://api.steemitdev.com')
     .option('--stage', 'set address to https://api.steemitstage.com')
-    .option('-s, --sign', 'sign the request using credentials from env vars RPCIT_ACCOUNT and RPCIT_KEY')
+    .option(
+        '-s, --sign',
+        'sign the request using credentials from env vars RPCIT_ACCOUNT and RPCIT_KEY'
+    )
     .option('-r, --raw', 'write the raw JSON-RPC 2.0 response to stdout')
     .option('-v, --verbose', 'print debug info to stderr')
     .action((method, params) => {
         sawAction = true
-        const {sign, verbose, raw} = program
+        const { sign, verbose, raw } = program
         let address = program.address
         if (program.stage) {
             address = 'https://api.steemitstage.com'
@@ -188,13 +218,15 @@ program
         if (program.dev) {
             address = 'https://api.steemitdev.com'
         }
-        main(method, params, {sign, verbose, address, raw}).then((code) => {
-            process.exitCode = code
-        }).catch((error) => {
-            stderr.write(String(error))
-            stderr.write('\n')
-            exit(1)
-        })
+        main(method, params, { sign, verbose, address, raw })
+            .then(code => {
+                process.exitCode = code
+            })
+            .catch(error => {
+                stderr.write(String(error))
+                stderr.write('\n')
+                exit(1)
+            })
     })
     .on('--help', () => {
         log(stdout, extraHelp)

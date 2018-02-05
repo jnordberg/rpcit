@@ -1,7 +1,7 @@
-import {utils} from '@steemit/koa-jsonrpc'
-import {JsonRpcRequest, sign as signRequest} from '@steemit/rpc-auth'
-import {parse as parseUrl} from 'url'
-import {VError} from 'verror'
+import { utils } from '@steemit/koa-jsonrpc'
+import { JsonRpcRequest, sign as signRequest } from '@steemit/rpc-auth'
+import { parse as parseUrl } from 'url'
+import { VError } from 'verror'
 
 export interface RPCSigner {
     account: string
@@ -9,7 +9,6 @@ export interface RPCSigner {
 }
 
 export class RPC {
-
     private requestOpts: any
     private seqNo = 0
 
@@ -23,7 +22,9 @@ export class RPC {
     }
 
     public async signedCall(signer: RPCSigner, method: string, params?: any) {
-        return this.send(this.signRequest(signer, this.buildRequest(method, params)))
+        return this.send(
+            this.signRequest(signer, this.buildRequest(method, params))
+        )
     }
 
     public async send(request: JsonRpcRequest) {
@@ -41,11 +42,14 @@ export class RPC {
     }
 
     public buildRequest(method: string, params?: any): JsonRpcRequest {
-        const req: JsonRpcRequest = {id: ++this.seqNo, jsonrpc: '2.0', method}
+        const req: JsonRpcRequest = {
+            id: ++this.seqNo,
+            jsonrpc: '2.0',
+            method
+        }
         if (params) {
             req.params = params
         }
         return req
     }
-
 }
