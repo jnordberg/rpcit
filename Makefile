@@ -24,3 +24,6 @@ clean:
 .PHONY: distclean
 distclean: clean
 	rm -rf node_modules/
+
+fmt:
+	find . \( -iname '*.json' -o -iname '*.ts' \) -exec prettier --no-semi --single-quote --tab-width 4 --write {} \;
